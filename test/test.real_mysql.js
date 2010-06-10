@@ -171,7 +171,7 @@ var test_result1 = function() {
     },
     function(error) { 
 	conn.close();
-	promise.emitFailure();
+	promise.emitError();
     });
 
     return promise;
