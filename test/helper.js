@@ -1,6 +1,9 @@
 var sys = require("sys");
 var assert = require("assert");
 
+var config = require('./config');
+var mysql = require('../lib/mysql');
+
 var scope = function(target, func) {
     return function(){ return func.apply(target, arguments); }
 }
@@ -18,6 +21,16 @@ var was_called_back = function() {
   pending_callbacks--;
 }
 exports.was_called_back = was_called_back;
+
+exports.createConnection = function() {
+    var conn = new mysql.Connection(config.mysql.hostname, 
+					  config.mysql.username,
+					  config.mysql.password,
+					  config.mysql.database,
+					  config.mysql.port);
+    exports.exceptClass(mysql.Connection, conn);
+    return conn;
+};
 
 var createMockConnection = function(mysql, stream) {
     var conn = new mysql.Connection('localhost', 
