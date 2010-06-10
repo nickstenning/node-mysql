@@ -732,6 +732,26 @@ var test_load_localfile = function() {
 }
 all_tests.push(["test_load_localfile", test_load_localfile]);
 
+var test_packet_read_order = function() {
+    var promise = new Promise();
+    var conn = helper.createConnection();
+    conn.connect();
+    conn.query("CREATE TEMPORARY TABLE t (id INTEGER, PRIMARY KEY (id)) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci'");
+    function run_test(count) {
+	conn.query("SELECT id, id, id, id, id, id, id, id, id, id FROM t WHERE 1", function() {
+	    if(count) return run_test(count - 1);
+	    conn.close();
+	    promise.emitSuccess();
+	}, function(err) {
+	    conn.close();
+	    promise.emitError();
+        });
+    }
+    run_test(1000);
+    return promise;
+};
+all_tests.push(["test_packet_read_order", test_packet_read_order]);
+
 helper.run(all_tests);
 
 /*
