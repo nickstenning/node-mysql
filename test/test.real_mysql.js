@@ -5,18 +5,13 @@ var sys = require("sys");
 var assert = require("assert");
 
 var helper = require('./helper');
-var config = require('./config');
 var mysql = require('../lib/mysql');
 var Promise = require('../lib/mysql/node-promise').Promise;
 
 var all_tests = [];
 var test_createConnection = function() {
     var promise = new Promise();
-    var conn = new mysql.Connection(config.mysql.hostname,
-				    config.mysql.username,
-				    config.mysql.password,
-				    config.mysql.database);
-    helper.exceptClass(mysql.Connection, conn);
+    var conn = helper.createConnection();
     helper.expect_callback();
     conn.connect(function() {
 	helper.was_called_back();
@@ -29,11 +24,7 @@ all_tests.push(["createConnection", test_createConnection]);
 
 var test_result1 = function() {
     var promise = new Promise();
-    var conn = new mysql.Connection(config.mysql.hostname, 
-					  config.mysql.username,
-					  config.mysql.password,
-					  config.mysql.database);
-    helper.exceptClass(mysql.Connection, conn);
+    var conn = helper.createConnection();
     conn.connect();
     conn.query("CREATE TEMPORARY TABLE t (id INTEGER, str VARCHAR(254), PRIMARY KEY (id)) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci'");
     conn.query("INSERT INTO t VALUES (1,'abc'),(2,'0'),(3,''),(256,null)");
@@ -180,7 +171,7 @@ var test_result1 = function() {
     },
     function(error) { 
 	conn.close();
-	promise.emitFailure();
+	promise.emitError();
     });
 
     return promise;
@@ -189,11 +180,7 @@ all_tests.push(["test_result1", test_result1]);
 
 var test_insert256rows = function() {
     var promise = new Promise();
-    var conn = new mysql.Connection(config.mysql.hostname, 
-					  config.mysql.username,
-					  config.mysql.password,
-					  config.mysql.database);
-    helper.exceptClass(mysql.Connection, conn);
+    var conn = helper.createConnection();
     conn.connect();
     conn.query("CREATE TEMPORARY TABLE t (id INTEGER)");
     var q = [];
@@ -226,11 +213,7 @@ all_tests.push(["test_insert256rows", test_insert256rows]);
 
 var test_query_without_table = function() {
     var promise = new Promise();
-    var conn = new mysql.Connection(config.mysql.hostname, 
-					  config.mysql.username,
-					  config.mysql.password,
-					  config.mysql.database);
-    helper.exceptClass(mysql.Connection, conn);
+    var conn = helper.createConnection();
     conn.connect();
 
     helper.expect_callback();
@@ -273,11 +256,7 @@ all_tests.push(["test_query_without_table", test_query_without_table]);
 
 var test_placeholder = function() {
     var promise = new Promise();
-    var conn = new mysql.Connection(config.mysql.hostname, 
-					  config.mysql.username,
-					  config.mysql.password,
-					  config.mysql.database);
-    helper.exceptClass(mysql.Connection, conn);
+    var conn = helper.createConnection();
     conn.connect();
     
     var sql = conn.extract_placeholder(['SELECT ?,?,?,?,?,?,?,?', 123, 1.23, 'abc', true, false, new mysql.Time(1976,2,8), new mysql.Time(0,0,0,12,34,56), new mysql.Time(1976,2,8,12,34,56)]);
@@ -332,11 +311,7 @@ all_tests.push(["test_placeholder", test_placeholder]);
 
 var test_multi_statements = function() {
     var promise = new Promise();
-    var conn = new mysql.Connection(config.mysql.hostname, 
-					  config.mysql.username,
-					  config.mysql.password,
-					  config.mysql.database);
-    helper.exceptClass(mysql.Connection, conn);
+    var conn = helper.createConnection();
     conn.connect();
 
     // multi statement without MULTI_STATEMENTS_ON
@@ -397,11 +372,7 @@ all_tests.push(["test_quote", test_quote]);
 
 var test_prepared_statements = function() {
     var promise = new Promise();
-    var conn = new mysql.Connection(config.mysql.hostname, 
-	                            config.mysql.username,
-				    config.mysql.password,
-			            config.mysql.database);
-    helper.exceptClass(mysql.Connection, conn);
+    var conn = helper.createConnection();
     conn.connect();
     conn.query("CREATE TEMPORARY TABLE t (id INTEGER, str VARCHAR(10), PRIMARY KEY (id)) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci'");
     
@@ -476,11 +447,7 @@ all_tests.push(["test_prepared_statements", test_prepared_statements]);
 
 var test_transaction1 = function() {
     var promise = new Promise();
-    var conn = new mysql.Connection(config.mysql.hostname, 
-					  config.mysql.username,
-					  config.mysql.password,
-					  config.mysql.database);
-    helper.exceptClass(mysql.Connection, conn);
+    var conn = helper.createConnection();
     conn.connect();
     conn.autocommit(false);
     conn.query("CREATE TEMPORARY TABLE t (id INTEGER, str VARCHAR(254), PRIMARY KEY (id)) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' Type=InnoDB");
@@ -506,11 +473,7 @@ all_tests.push(["test_transaction1", test_transaction1]);
 
 var test_transaction2 = function() {
     var promise = new Promise();
-    var conn = new mysql.Connection(config.mysql.hostname, 
-					  config.mysql.username,
-					  config.mysql.password,
-					  config.mysql.database);
-    helper.exceptClass(mysql.Connection, conn);
+    var conn = helper.createConnection();
     conn.connect();
     conn.autocommit(false);
     conn.query("CREATE TEMPORARY TABLE t (id INTEGER, str VARCHAR(254), PRIMARY KEY (id)) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' Type=InnoDB");
@@ -532,11 +495,7 @@ all_tests.push(["test_transaction2", test_transaction2]);
 
 var test_error = function() {
     var promise = new Promise();
-    var conn = new mysql.Connection(config.mysql.hostname, 
-					  config.mysql.username,
-					  config.mysql.password,
-					  config.mysql.database);
-    helper.exceptClass(mysql.Connection, conn);
+    var conn = helper.createConnection();
     conn.connect();
     helper.expect_callback();
     conn.query('ERROR STATEMENT',
@@ -556,11 +515,7 @@ all_tests.push(["test_error", test_error]);
 
 var test_defaultError = function() {
     var promise = new Promise();
-    var conn = new mysql.Connection(config.mysql.hostname, 
-					  config.mysql.username,
-					  config.mysql.password,
-					  config.mysql.database);
-    helper.exceptClass(mysql.Connection, conn);
+    var conn = helper.createConnection();
     conn.connect();
     conn.defaultErrback = function(error) {
 	helper.was_called_back();
@@ -582,11 +537,7 @@ all_tests.push(["test_defaultError", test_defaultError]);
 var test_statements_type = function(sql_type, value, assert_value_or_callback) {
     return function() {
 	var promise = new Promise();
-	var conn = new mysql.Connection(config.mysql.hostname, 
-					config.mysql.username,
-					config.mysql.password,
-					config.mysql.database);
-	helper.exceptClass(mysql.Connection, conn);
+	var conn = helper.createConnection();
 	conn.connect();
 	conn.query("CREATE TEMPORARY TABLE t (id INTEGER, val "+sql_type+", PRIMARY KEY (id)) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' ENGINE=InnoDB");
 	
@@ -624,11 +575,7 @@ var test_statements_type = function(sql_type, value, assert_value_or_callback) {
 var test_prepared_statements_type = function(sql_type, value, assert_value_or_callback) {
     return function() {
 	var promise = new Promise();
-	var conn = new mysql.Connection(config.mysql.hostname, 
-					config.mysql.username,
-					config.mysql.password,
-					config.mysql.database);
-	helper.exceptClass(mysql.Connection, conn);
+	var conn = helper.createConnection();
 	conn.connect();
 	conn.query("CREATE TEMPORARY TABLE t (id INTEGER, val "+sql_type+", PRIMARY KEY (id)) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci'");
 	
@@ -755,11 +702,7 @@ test_type(all_tests, 'TIME', new mysql.Time(0,0,8,12,34,56), "8 12:34:56", funct
 
 var test_load_localfile = function() {
     var promise = new Promise();
-    var conn = new mysql.Connection(config.mysql.hostname, 
-					  config.mysql.username,
-					  config.mysql.password,
-					  config.mysql.database);
-    helper.exceptClass(mysql.Connection, conn);
+    var conn = helper.createConnection();
     conn.local_infile = true;
     conn.connect();
     conn.query("CREATE TEMPORARY TABLE t (id INTEGER, str VARCHAR(254), PRIMARY KEY (id)) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci'");
@@ -788,6 +731,26 @@ var test_load_localfile = function() {
     return promise;
 }
 all_tests.push(["test_load_localfile", test_load_localfile]);
+
+var test_packet_read_order = function() {
+    var promise = new Promise();
+    var conn = helper.createConnection();
+    conn.connect();
+    conn.query("CREATE TEMPORARY TABLE t (id INTEGER, PRIMARY KEY (id)) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci'");
+    function run_test(count) {
+	conn.query("SELECT id, id, id, id, id, id, id, id, id, id FROM t WHERE 1", function() {
+	    if(count) return run_test(count - 1);
+	    conn.close();
+	    promise.emitSuccess();
+	}, function(err) {
+	    conn.close();
+	    promise.emitError();
+        });
+    }
+    run_test(1000);
+    return promise;
+};
+all_tests.push(["test_packet_read_order", test_packet_read_order]);
 
 helper.run(all_tests);
 
