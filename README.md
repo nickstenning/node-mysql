@@ -99,12 +99,6 @@ Promise library
 * Copyright 2009, 2010 Ryan Lienhart Dahl. All rights reserved.
 * License: MIT
 
-SHA1 library from Takanori Ishikawa.
-
-* [http://www.metareal.org/](http://www.metareal.org/)
-* Copyright (c) 2008  Takanori Ishikawa  <takanori.ishikawa@gmail.com>
-* License: MIT
-
 pack/unpack from php.js
 
 * [http://phpjs.org/functions/pack:880](http://phpjs.org/functions/pack:880)
