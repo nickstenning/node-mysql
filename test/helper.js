@@ -1,85 +1,42 @@
-var sys = require("sys");
-var assert = require("assert");
+var events = require('events');
 
-var config = require('./config');
 var mysql = require('../lib/mysql');
+var config = require('./config');
 
-var scope = function(target, func) {
-    return function(){ return func.apply(target, arguments); }
+function createConnection() {
+	return new mysql.Connection(
+			config.mysql.host,
+			config.mysql.username, config.mysql.password,
+			config.mysql.database, config.mysql.port);
 }
-exports.scope = scope;
+exports.createConnection = createConnection;
 
-var pending_callbacks = 0;
-exports.pending_callbacks = pending_callbacks;
+/**
+ * @param connection a MySQL connection
+ * @param query SQL query to be run
+ * @return EventEmitter query execution promise
+ */
+function createQueryPromise(connection, query) {
+	var promise = new events.EventEmitter();
 
-var expect_callback = function() {
-  pending_callbacks++;
+	connection.query(query, 
+		function(result) {
+			promise.emit('success', result);
+		}, function(error) {
+			promise.emit('error', error);
+		});
+
+	return promise;
 }
-exports.expect_callback = expect_callback;
+exports.createQueryPromise = createQueryPromise;
 
-var was_called_back = function() {
-  pending_callbacks--;
+function connectionCloseBatch(connection) {
+	return {
+		'after test' : {
+			'connection is closed' : function() {
+				connection.close();
+			}
+		}
+	};
 }
-exports.was_called_back = was_called_back;
-
-exports.createConnection = function() {
-    var conn = new mysql.Connection(config.mysql.hostname, 
-					  config.mysql.username,
-					  config.mysql.password,
-					  config.mysql.database,
-					  config.mysql.port);
-    exports.exceptClass(mysql.Connection, conn);
-    return conn;
-};
-
-var createMockConnection = function(mysql, stream) {
-    var conn = new mysql.Connection('localhost', 
-				    'nodejs_mysql',
-				    'nodejs_mysql',
-				    'nodejs_mysql',
-				    33306);
-    exports.exceptClass(mysql.Connection, conn);
-    conn.addListener("connect", function() {
-	conn.protocol.conn.socket.write(stream);
-    });
-    return conn;
-}
-exports.createMockConnection = createMockConnection;
-
-var run = function(testfuncs){
-    pending_callbacks = 0;
-    var testfunc = testfuncs.shift();
-    if(!testfunc) return true;
-    var promise = testfunc[1]();
-    if(promise) {
-	promise
-	    .addCallback(function() {
-		assert.equal(0, pending_callbacks);
-		sys.puts("Success: "+testfunc[0]);
-		run(testfuncs);
-	    })
-	    .addErrback(function() {
-		sys.puts("Failed: "+testfunc[0]);
-		run(testfuncs);
-	    });
-    }
-    else {
-	sys.puts("Tested: "+testfunc[0])
-	run(testfuncs);
-    }
-}
-exports.run = run;
-
-var exceptClass = function(klass,obj) {
-    assert.equal(klass.contructor, obj.constractor);
-}
-exports.exceptClass = exceptClass;
-
-/*
-node-mysql
-A node.js interface for MySQL
-
-Author: masuidrive <masui@masuidrive.jp>
-License: MIT License
-Copyright (c) Yuichiro MASUI
-*/
+exports.connectionCloseBatch = connectionCloseBatch;

@@ -304,7 +304,7 @@ var test_placeholder = function() {
 		   sys.puts(sys.inspect(error));
 		   assert.ok(true, false);
 	       });
-    return promise
+    return promise;
 }
 all_tests.push(["test_placeholder", test_placeholder]);
 
@@ -359,7 +359,7 @@ var test_multi_statements = function() {
 	       function(error) {
 		   assert.ok(true, false);
 	       });
-    return promise
+    return promise;
 }
 all_tests.push(["test_multi_statements", test_multi_statements]);
 
@@ -440,7 +440,7 @@ var test_prepared_statements = function() {
         function(error){ assert.ok(true, false); });
     },
     function(error){ assert.ok(true, false); });
-    return promise
+    return promise;
 }
 all_tests.push(["test_prepared_statements", test_prepared_statements]);
 
