@@ -6,7 +6,7 @@ var sys = require('sys');
 var helper = require('./helper');
 var mysql = require('../lib/mysql');
 
-var connection = helper.createConnection();
+var connection = helper.connection();
 connection.connect();
 connection.query("CREATE TEMPORARY TABLE t (id INTEGER AUTO_INCREMENT, value INTEGER, PRIMARY KEY (id))");
 

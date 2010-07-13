@@ -1,15 +1,55 @@
 var events = require('events');
-
 var mysql = require('../lib/mysql');
-var config = require('./config');
 
-function createConnection() {
+var defaultConfig = {
+	hostname : '127.0.0.1',
+	port : 3306,
+
+	username : 'nodejs_mysql',
+	password : 'nodejs_mysql',
+	database : 'nodejs_mysql'
+};
+
+var connection = function(config) {
+	function merge(obj1, obj2) {
+		var ret = {};
+		for (var property in obj1) ret[property] = obj1[property];
+		for (var property in obj2) ret[property] = obj2[property];
+		return ret;
+	}
+
+	config = merge(defaultConfig, config); 
+
 	return new mysql.Connection(
-			config.mysql.host,
-			config.mysql.username, config.mysql.password,
-			config.mysql.database, config.mysql.port);
-}
-exports.createConnection = createConnection;
+			config.host,
+			config.username, config.password,
+			config.database,
+			config.port);
+};
+
+connection.shouldFail = function(config, assertions) {
+	return {
+		topic : function() {
+			var promise = new events.EventEmitter();
+			var conn = connection(config);
+			conn.connect();
+			conn.addListener('error', function(error) {
+				promise.emit('success', error);
+			});
+
+			// Just in case...
+			conn.close();
+
+			return promise;
+		},
+		'should fail' : function(error) {
+			if (typeof assertions != 'undefined') {
+				assertions(error);
+			}
+		}
+	};
+};
+exports.connection = connection;
 
 /**
  * @param connection a MySQL connection
