@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 GLOBAL.DEBUG = true;
 var events = require("events");
 var sys = require("sys");
@@ -7,20 +6,6 @@ var assert = require("assert");
 var helper = require('./helper');
 var mysql = require('../lib/mysql');
 var Promise = require('../lib/mysql/node-promise').Promise;
-
-var all_tests = [];
-var test_createConnection = function() {
-    var promise = new Promise();
-    var conn = helper.createConnection();
-    helper.expect_callback();
-    conn.connect(function() {
-	helper.was_called_back();
-	conn.close();
-	promise.emitSuccess();
-    });
-    return promise
-};
-all_tests.push(["createConnection", test_createConnection]);
 
 var test_result1 = function() {
     var promise = new Promise();
@@ -177,39 +162,6 @@ var test_result1 = function() {
     return promise;
 };
 all_tests.push(["test_result1", test_result1]);
-
-var test_insert256rows = function() {
-    var promise = new Promise();
-    var conn = helper.createConnection();
-    conn.connect();
-    conn.query("CREATE TEMPORARY TABLE t (id INTEGER)");
-    var q = [];
-    for(var i=0; i<256; ++i) {
-	q.push("("+i+")");
-    }
-    conn.query("INSERT INTO t(id) VALUES "+q.join(","), function(result) {
-	assert.equal(256, result.affected_rows);
-    });
-    
-    // execute SELECT query
-    helper.expect_callback();
-    conn.query('SELECT * FROM t ORDER BY id', function(result) { // Success
-	helper.was_called_back();
-	
-	assert.equal(1, result.fields.length);
-	assert.equal(256, result.records.length);
-	
-	conn.close();
-	promise.emitSuccess();
-    },
-    function(error) { 
-         assert.ok(false);
-    });
-
-    return promise;
-};
-all_tests.push(["test_insert256rows", test_insert256rows]);
-
 
 var test_query_without_table = function() {
     var promise = new Promise();

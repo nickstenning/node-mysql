@@ -56,7 +56,7 @@ exports.connection = connection;
  * @param query SQL query to be run
  * @return EventEmitter query execution promise
  */
-function createQueryPromise(connection, query) {
+exports.query = function(connection, query) {
 	var promise = new events.EventEmitter();
 
 	connection.query(query, 
@@ -67,8 +67,8 @@ function createQueryPromise(connection, query) {
 		});
 
 	return promise;
-}
-exports.createQueryPromise = createQueryPromise;
+};
+exports.createQueryPromise = exports.query;
 
 function connectionCloseBatch(connection) {
 	return {
@@ -80,3 +80,4 @@ function connectionCloseBatch(connection) {
 	};
 }
 exports.connectionCloseBatch = connectionCloseBatch;
+connection.close = connectionCloseBatch;
