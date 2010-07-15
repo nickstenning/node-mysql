@@ -62,13 +62,28 @@ exports.query = function(connection, query) {
 	connection.query(query, 
 		function(result) {
 			promise.emit('success', result);
-		}, function(error) {
+		},
+		function(error) {
 			promise.emit('error', error);
 		});
 
 	return promise;
 };
 exports.createQueryPromise = exports.query;
+
+exports.query.fail = function(connection, query) {
+	var promise = new events.EventEmitter();
+
+	connection.query(query,
+		function(result) {
+			promise.emit('error', result);
+		},
+		function(error) {
+			promise.emit('success', error);
+		});
+
+	return promise;
+};
 
 function connectionCloseBatch(connection) {
 	return {

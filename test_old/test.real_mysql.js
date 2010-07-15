@@ -163,49 +163,6 @@ var test_result1 = function() {
 };
 all_tests.push(["test_result1", test_result1]);
 
-var test_query_without_table = function() {
-    var promise = new Promise();
-    var conn = helper.createConnection();
-    conn.connect();
-
-    helper.expect_callback();
-    conn.query('SELECT 1.23',
-	       function(result) {
-		   helper.was_called_back();
-		   
-		   // field information
-		   assert.equal(1, result.fields.length);
-		   assert.equal('NEWDECIMAL', result.fields[0].type.name);
-		   assert.equal('', result.fields[0].db);
-		   assert.equal('1.23', result.fields[0].name);
-		   assert.equal('', result.fields[0].org_name);
-		   assert.equal('', result.fields[0].table);
-		   assert.equal('', result.fields[0].org_table);
-		   assert.equal(false, conn.has_more_results());
-		   
-		   // result data
-		   assert.equal(1, result.records.length);
-		   assert.equal(1.23, result.records[0][0]);
-		   
-		   // result hash
-		   var res = result.toHash(result.records[0]);
-		   assert.equal(res['1.23'], 1.23);
-		   
-		   // result hash fieldname without table
-		   result.fieldname_with_table = false
-		   var res = result.toHash(result.records[0]);
-		   assert.equal(res['1.23'], 1.23);
-		   conn.close();
-		   promise.emitSuccess();
-	       }, 
-	       function(error) { 
-		   assert.ok(true, false);
-	       });
-    return promise;
-}
-all_tests.push(["test_query_without_table", test_query_without_table]);
-
-
 var test_placeholder = function() {
     var promise = new Promise();
     var conn = helper.createConnection();
