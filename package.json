@@ -1,0 +1,23 @@
+{
+  "name": "mysql",
+  "description": "A pure-javascript MySQL network driver for node",
+  "version": "0.0.1",
+  "contributors": [ 
+    { "name": "Yuichiro MASUI", "email": "masui@masuidrive.jp" },
+    { "name": "Scott González", "email": "scott.gonzalez@gmail.com" },
+    { "name": "Delyan Angelov", "email": "delian66@gmail.com" },
+    { "name": "Oleg Efimov", "email": "efimovov@gmail.com" },
+    { "name": "Peter Rekdal Sunde", "email": "peter.sunde@gmail.com" },
+    { "name": "mape", "url": "http://github.com/mape" },
+    { "name": "Ben Trask", "email": "bentrask@comcast.net" },
+    { "name": "Nick Stenning", "url": "http://github.com/nickstenning" }
+  ],
+  "main": "lib/mysql",
+  "directories": {
+    "lib": "./lib/mysql"
+  },
+  "scripts": {
+    "test": "vows"
+  },
+  "engines": { "node": ">= 0.1.94" }
+}
