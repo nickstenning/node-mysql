@@ -1,35 +1,24 @@
 # node-mysql
 
-node-mysql is pure Javascript MySQL network driver for [node.js](http://nodejs.org/)
+node-mysql is a pure Javascript MySQL network driver for [node.js](http://nodejs.org/)
 
+# Want to help?
 
-# Want to help
-It's for testing stage.
-Now It can use for this driver developer only.
-
-I have a lot of tasks to make stable driver.
-I want your help.
+node-mysql is currently only really suitable for testing. It has a long way to go until it's a stable MySQL adapter, and your help would be greatly appreciated!
 
 ## Tests
-I need your help in testing this driver. It will be great if you use it for testing or prototyping.
-It's testing stage, It's not for real project
-If you find bugs, strange thing and unknown things, please send them to [@masuidrive_en](http://twitter.com/masuidrive_en) or [github issues](http://github.com/masuidrive/node-mysql/issues)
-If you write test code (test folder), It's awesome!!
+
+Tests are currently in the process of being rewritten to use [vows.js](http://vowsjs.org)
 
 ## Documentation
 
-Sorry, This driver's documentation is less.
-My English skill is horrible. :-(
+Originally written by [Yuichiro MASUI](http://github.com/masuidrive/), the library is currently lacking in documentation, although this is being worked on.
 
-This drivers is came from Ruby's mysql driver.
-Almost API is same as [mysql.rb](http://github.com/tmtm/ruby-mysql/blob/2.9/lib/mysql.rb). maybe [this document](http://tmtm.org/en/mysql/ruby/) is useful reference.
+The API was originally modelled on  [mysql.rb](http://github.com/tmtm/ruby-mysql/blob/2.9/lib/mysql.rb). The following might be a useful reference: [tmtm's mysql library reference](http://tmtm.org/en/mysql/ruby/).
 
+## Pool manager
 
-## Pool mananager
-Currently, this driver supported single connection only.
-We need multi mysql driver pool manager for multi connections.
-And connection pool require transaction support.
-
+Currently, this driver supports single connection only. In order to implement multiple connections, a pool manager needs to be written, which in turn requires MySQL transactions to be implemented.
 
 # Example
 
@@ -55,35 +44,19 @@ And connection pool require transaction support.
             sys.puts("Error: "+sys.inspect(error));
         });
 
-And see exmaples folder.
-
+See also the examples folder.
 
 # Requirements
 
 * [node.js](http://nodejs.org/) >= 0.1.92
 
-
-Optional:
-
-* [node-crypt](http://github.com/waveto/node-crypto) for faster authenticate.
-
-
 # License
 
 MIT License. See LICENSE file.
 
+# Who wrote this?
 
-# Who?
-
-Code by Yuichiro MASUI(masuidrive) and awesome contributers.
-please see [AUTHORS](http://github.com/masuidrive/node-mysql/blob/master/AUTHORS)
-
-* <masui@masuidrive.jp>
-* [http://blog.masuidrive.jp/](http://masuidrive.com/) (English)
-* [http://twitter.com/masuidrive_en](http://twitter.com/masuidrive_en/) (English)
-* [http://blog.masuidrive.jp/](http://blog.masuidrive.jp/) (Japanese)
-* [http://twitter.com/masuidrive](http://twitter.com/masuidrive/) (Japanese)
-
+Original code by [Yuichiro MASUI](http://github.com/masuidrive/) and contributors. For an up-to-date list see [AUTHORS](http://github.com/nickstenning/node-mysql/blob/master/AUTHORS)
 
 # Related licenses
 
